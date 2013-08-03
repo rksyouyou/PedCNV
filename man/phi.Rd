@@ -1,0 +1,19 @@
+\docType{data}
+\name{phi}
+\alias{phi}
+\title{Description}
+\format{TODO}
+\source{
+  TODO
+}
+\description{
+  Details
+}
+\author{
+  TODO
+}
+\references{
+  TODO
+}
+\keyword{datasets}
+

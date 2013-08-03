@@ -66,18 +66,16 @@ ClusProc0 <- function(signal,Num,prop,threshold,thres_sil,thres_MAF,cut){
 ##' @title This function returns the optimal number of clusters and some descriptive statistics for each object.
 ##' @param signal for specifying the probe intensity measures. It can be a numeric vector, matrix, data.frame or list.
 ##' @param N for applying the given number of clusters to the data. N needs to be larger than 1 and if it is 1, error will be returned.
-##' @param prop a numeric value between 0 and 1. This is used to select the number of PC scores, and PC scores corresponding to the minimum number of eigenvalues whose cumulative proportion is larger than \textit{prop} will be selected. The default is 0.9 and it is meaningful if the value of {varSelection} is TRUE. Otherwise it is ignored. See {varSelection}.
+##' @param prop a numeric value between 0 and 1. This is used to select the number of PC scores, and PC scores corresponding to the minimum number of eigenvalues whose cumulative proportion is larger than prop will be selected. The default is 0.9 and it is meaningful if the value of {varSelection} is TRUE. Otherwise it is ignored. See {varSelection}.
 ##' @param threshold Convergence threshold. The iteration stops if the absolute difference of loglikelihood between successive iterations is less than {threshold}.
 ##' @param varSelection a factor. For specifying how to handle the intensity values. It must take value on 'RAW', 'PCA', 'PCA1' and 'MEAN'. If the value is 'RAW', then the raw intensity value will be used. If it is 'PCA', then the first several PCA scores which account for certain proportion (this value will be defined in parameter {prop}) of all the variance will be used. If the value is 'PCA1', then the first PCA scores will be used.If the value is 'MEAN', the mean of all the probes will be used. 
+##' @param thres_sil ??
+##' @param adjust ??
+##' @param thres_MAF ??
+##' @param scale ??
 ##' @return It returns object of class 'clust'. 'clust' is a list containing at least following componets:
-##' @param clusNum The best clustering number given the parameter {N}.
-##' @param logL The loglikelihood value of the model when the clustering number is {clusNum}.
-##' @param silRes The mean of silhouette width for all the object when the clustering number is {clusNum}.
-##' @param clusRes The clustering detail for each object when the cluster number is {clusNum}.
-##' @param sil The sihouette width for each object when the cluster number is {clusNum}.
-##' @author meiling
+##' @author Meiling
 ##' @export
-
 ClusProc <- function(signal,N,prop=0.9,threshold=1e-05,varSelection=c('PCA','RAW','MEAN','PCA1'),thres_sil,adjust=TRUE,thres_MAF=0.01,scale=FALSE){
 
   sX0 <- as.matrix(signal)
@@ -138,11 +136,20 @@ ClusProc <- function(signal,N,prop=0.9,threshold=1e-05,varSelection=c('PCA','RAW
   
 }
 
-
-print.clust <- function(resfinal) {
-    adjust <- resfinal$adjust
-    if(adjust)   res <- data.frame(clusNum_adjust=resfinal$silWidth$clusNum_adjust,logL=round(resfinal$logL,4),silMean_adjust=round(resfinal$silWidth$silMean_adjust,4)) else
-    res <- data.frame(clusNum=resfinal$silWidth$clusNum,logL=round(resfinal$logL,4),silMean=round(resfinal$silWidth$silMean,4)) 
+##' Description
+##'
+##' Detail
+##' @title TODO
+##' @param x TODO
+##' @param ... TODO
+##' @return TODO
+##' @author Meiling
+##' @method print clust
+##' @export
+print.clust <- function(x, ...) {
+    adjust <- x$adjust
+    if(adjust)   res <- data.frame(clusNum_adjust=x$silWidth$clusNum_adjust,logL=round(x$logL,4),silMean_adjust=round(x$silWidth$silMean_adjust,4)) else
+    res <- data.frame(clusNum=x$silWidth$clusNum,logL=round(x$logL,4),silMean=round(x$silWidth$silMean,4)) 
   print(res,quote=FALSE,row.names=FALSE)
 }
 

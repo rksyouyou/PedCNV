@@ -33,3 +33,4 @@ RcppExport SEXP getInitial( SEXP residual_, SEXP phi_, SEXP S_){
 
   return Rcpp::List::create(Rcpp::Named("sig2") = sig2, Rcpp::Named("sig2g") = sig2g);
 }
+

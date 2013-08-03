@@ -45,5 +45,5 @@ RcppExport SEXP sil_inter(SEXP x_, SEXP clusRes_, SEXP clusNo_, SEXP obsNo_, SEX
   }
 
    return Rcpp::List::create( Rcpp::Named("sil",sil), Rcpp::Named("d0", d0) );
-
 }
+

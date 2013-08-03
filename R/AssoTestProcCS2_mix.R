@@ -155,19 +155,20 @@ CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, 
 ##'
 ##' no further details yet.
 ##' @title CNV association testing
-##' @param signal ??
-##' @param pheno ??
-##' @param envirX ??
+##' @param signal TODO
+##' @param ped TODO
+##' @param envirX TODO
+##' @param phi TODO
 ##' @param N for applying the given number of clusters to the data. N needs to be larger than 1 and if it is 1, error will be returned.
-##' @param threshold Convergence threshold. The iteration stops if the absolute difference of loglikelihood between successive iterations is less than \texttt{threshold}.\\
+##' @param threshold Convergence threshold. The iteration stops if the absolute difference of loglikelihood between successive iterations is less than threshold.\\
 ##' @param varSelection a factor. For specifying how to handle the intensity values. It must take value on 'RAW', 'PCA', 'PCA1' and 'MEAN'. If the value is 'RAW', then the raw intensity value will be used. If it is 'PCA', then the first several PCA scores which account for certain proportion (this value will be defined in parameter {prop}) of all the variance will be used. If the value is 'PCA1', then the first PCA scores will be used.If the value is 'MEAN', the mean of all the probes will be used. 
+##' @param H0 TODO
+##' @param thresEM TODO
+##' @param thresAI TODO
+##' @param itermax TODO
 ##' @return It returns object of class 'asso'. 'asso' is a list containing at least following componets:
-##' @author meiling
+##' @author Meiling
 ##' @export
-
-
-  
-
 AssoTestProc <- function(signal,ped,envirX,phi,N,threshold=1e-05,varSelection=c('PCA','RAW','MEAN','PCA1'),H0=TRUE,thresEM=0.005,thresAI=0.00001,itermax){
 
     rn_signal <- row.names(signal)
@@ -274,29 +275,39 @@ AssoTestProc <- function(signal,ped,envirX,phi,N,threshold=1e-05,varSelection=c(
     return(resfinal)
 }
 
-print.asso <- function(resfinal){
+##' Description
+##'
+##' Details
+##' @title TODO
+##' @param x TODO
+##' @param ... TODO
+##' @return TODO
+##' @author Meiling
+##' @method print asso
+##' @export
+print.asso <- function(x, ...){
 
     cat('Pvalue of Association Test\n')
-    cat('Using the most probable copy number:',resfinal$H0$STEp,'.\n')
-    cat('Using the probe intensity measures:',resfinal$H0$STIMp,'.\n')
+    cat('Using the most probable copy number:',x$H0$STEp,'.\n')
+    cat('Using the probe intensity measures:',x$H0$STIMp,'.\n')
 
     cat('\n\n Under H0:\n')
     cat('The coefficent:\n')
-    temp <- c(bet=0,alpha=round(resfinal$H0$alpha,4))
+    temp <- c(bet=0,alpha=round(x$H0$alpha,4))
     print(temp,quote=FALSE,row.names=FALSE)
     cat('The estimated variance:\n')
-    temp <- data.frame(sig2=resfinal$H0$sig2,sig2g=resfinal$H0$sig2g)
+    temp <- data.frame(sig2=x$H0$sig2,sig2g=x$H0$sig2g)
     print(temp,quote=FALSE,row.names=FALSE)
-    ## cat('The loglikelihood function value:',round(resfinal$H0$logL,4),'.\n')
-    if(length(resfinal$H1)>1){
+    ## cat('The loglikelihood function value:',round(x$H0$logL,4),'.\n')
+    if(length(x$H1)>1){
         cat('\n\n Under H1:\n')
         cat('The coefficent:\n')
-        temp <- c(bet=0,alpha=round(resfinal$H1$alpha,4))
+        temp <- c(bet=0,alpha=round(x$H1$alpha,4))
         print(temp,quote=FALSE,row.names=FALSE)
         cat('The estimated variance:\n')
-        temp <- data.frame(sig2=resfinal$H1$sig2,sig2g=resfinal$H1$sig2g)
+        temp <- data.frame(sig2=x$H1$sig2,sig2g=x$H1$sig2g)
         print(temp,quote=FALSE,row.names=FALSE)
-        ## cat('The loglikelihood function value:',round(resfinal$H1$logL,4),'.\n')
+        ## cat('The loglikelihood function value:',round(x$H1$logL,4),'.\n')
     }
 }
 

@@ -1,0 +1,6 @@
+export(AssoTestProc)
+export(ClusProc)
+S3method(plot,clust)
+S3method(print,asso)
+S3method(print,clust)
+useDynLib(PedCNV)

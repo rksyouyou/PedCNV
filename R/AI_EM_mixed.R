@@ -2,7 +2,6 @@
 getInitial <- function(residual,phi,S){
      #.Call("getInitial", residual, phi, S, PACKAGE = "CNVLMM")
     temp <- .Call("getInitial", residual, phi, S)
-
 #    cat('initial values: (sig2) ', temp[["sig2"]], ' (sig2g)', temp[["sig2g"]],'\n')
     unlist(temp)
 }
@@ -10,17 +9,6 @@ getInitial <- function(residual,phi,S){
 
 doEM_REML <- function(curTheta,curK,y,X,yy,Xy,XX,phi,phiInv, trphiInv,S, q, threshold){
     res = .Call("doEM_REML", curTheta, curK, y, X, yy, Xy, XX, phi, phiInv, trphiInv, S, q, threshold)
-    return(res)
-}
-
-
-doEM_ML <- function(cursig2g,curK,y,X,yy,Xy,XX,phi,phiInv, trphiInv,S, q, threshold){
-    res = .Call("doEM_ML", snp, curTheta, curK, y, X, yy, Xy, XX, phi, phiInv, trphiInv, S, q, threshold)
-    return(res)
-}
-
-doNR_ML<-function(curTheta, curK,y,X,phi,S,itrmax,threshold){
-    res = .Call("doNR_ML", curTheta, curK, y, X, phi, S, itrmax, threshold)
     return(res)
 }
 
@@ -52,9 +40,11 @@ doPolyGenic<-function(envirX,snp,pheno,phi,H0=FALSE, thresEM=0.001,method='REML'
 ###### Check!!
       if(method=='REML') {
         updates  <- doEM_REML(inis[2],inis[1]/inis[2],y,X,yy,Xy,XX,phi,phiInv, trphiInv, S, q, thresEM)
-      } else if(method=='ML') {
-          updates  <- doEM_ML(inis[2],inis[1]/inis[2],y,X,yy,Xy,XX,phi,phiInv, trphiInv, S, q, thresEM)
-      } else {
+      }
+      ## else if(method=='ML') {
+      ##     updates  <- doEM_ML(inis[2],inis[1]/inis[2],y,X,yy,Xy,XX,phi,phiInv, trphiInv, S, q, thresEM)
+      ## }
+      else {
           print("Errors")
           return(list('NA'))
       }
@@ -68,10 +58,11 @@ doPolyGenic<-function(envirX,snp,pheno,phi,H0=FALSE, thresEM=0.001,method='REML'
       if(method=='REML') {
           print('AI algorithm for REML')
           results <- doAI_REML(curTheta,curK,y,X,yy,Xy,XX,phi,phiInv, trphiInv,S, q,itrmax,thresAI)
-      } else if(method=='ML'){
-          print('NR algorithm for ML')
-          results <- doNR_ML(curTheta, curK,y,X,phi,S,itrmax,threshold)
       }
+      ## else if(method=='ML'){
+      ##     print('NR algorithm for ML')
+      ##     results <- doNR_ML(curTheta, curK,y,X,phi,S,itrmax,threshold)
+      ## }
       return(results)}
 }
 
