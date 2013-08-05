@@ -17,7 +17,7 @@ doAI_REML<-function(curTheta,curK,y,X,yy,Xy,XX,phi,phiInv, trphiInv,S, q, itrmax
     return(res)
 }
 
-doPolyGenic<-function(envirX,snp,pheno,phi,H0=FALSE, thresEM=0.001,method='REML',itrmax=20,thresAI=0.00001,phiInv=phiInv){
+doPolyGenic<-function(envirX,snp,pheno,phi,H0, thresEM,itrmax=20,thresAI,phiInv){
 
   S  <- length(pheno)
   if(H0) X  <- envirX else
@@ -26,7 +26,6 @@ doPolyGenic<-function(envirX,snp,pheno,phi,H0=FALSE, thresEM=0.001,method='REML'
   yy <- t(y)%*%y
   Xy <- t(X)%*%y
   XX <- t(X)%*%X
-  #phiInv  <- solve(phi)
   trphiInv<- sum(diag(phiInv))
   q  <- ncol(X)
   residual <- y - X%*%matrix(solve(XX)%*%Xy,ncol=1)
@@ -37,17 +36,8 @@ doPolyGenic<-function(envirX,snp,pheno,phi,H0=FALSE, thresEM=0.001,method='REML'
       return(NA)
   } else {
   ## MME method to find the initial values
-###### Check!!
-      if(method=='REML') {
-        updates  <- doEM_REML(inis[2],inis[1]/inis[2],y,X,yy,Xy,XX,phi,phiInv, trphiInv, S, q, thresEM)
-      }
-      ## else if(method=='ML') {
-      ##     updates  <- doEM_ML(inis[2],inis[1]/inis[2],y,X,yy,Xy,XX,phi,phiInv, trphiInv, S, q, thresEM)
-      ## }
-      else {
-          print("Errors")
-          return(list('NA'))
-      }
+      updates  <- doEM_REML(inis[2],inis[1]/inis[2],y,X,yy,Xy,XX,phi,phiInv, trphiInv, S, q, thresEM)
+  }
 ######
 
       curTheta <- updates[1]
@@ -55,15 +45,10 @@ doPolyGenic<-function(envirX,snp,pheno,phi,H0=FALSE, thresEM=0.001,method='REML'
       curTheta <- inis[2]
       curK     <- inis[1]/inis[2]
 
-      if(method=='REML') {
-          print('AI algorithm for REML')
-          results <- doAI_REML(curTheta,curK,y,X,yy,Xy,XX,phi,phiInv, trphiInv,S, q,itrmax,thresAI)
-      }
-      ## else if(method=='ML'){
-      ##     print('NR algorithm for ML')
-      ##     results <- doNR_ML(curTheta, curK,y,X,phi,S,itrmax,threshold)
-      ## }
-      return(results)}
+      print('AI algorithm for REML')
+      results <- doAI_REML(curTheta,curK,y,X,yy,Xy,XX,phi,phiInv, trphiInv,S, q,itrmax,thresAI)
+
+      return(results)
 }
 
 

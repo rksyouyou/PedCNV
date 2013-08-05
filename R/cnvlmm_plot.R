@@ -1,14 +1,21 @@
-##' TODO
+##' Makes formatted plots from the clustering result returned ClusProc
 ##'
-##' TODO
-##' @title TODO
-##' @param x TODO
-##' @param type TODO
-##' @param adjust TODO
-##' @param ... TODO
-##' @return TODO
-##' @author Meiling
-##' @method plot clust
+##' @title Plots clustering result
+##' @param x The clustering results obtained from ClusProc.
+##' @param type Factor. For specifying the plot type. It must take value on 'histo', 'scat' and 'sil'. If the value is 'histo', then the histogram of the first PC score of the intensity measurement will be made. If the value is 'scat', then the scatter plot of the first PC score of the intensity measurement v.s the mean of the intensity measurement will be made. If the value is 'sil', then the silhouette plot will be made.
+##' @param adjust Logicals. If TRUE (default), the silhouette-adjusted clustering result will be used. If FALSE, the initial clustering result will be used.
+##' @param ... Usual arguments passed to the qplot function.
+##' @author Meiling Liu \email{meiling.sta@@gmail.com} and Sungho Won \email{sunghow@@gmail.com}
+##' @examples
+##' # Load data and correlation matrix
+##' data(dat)
+##' data(phi)
+##' signal <- dat$Inx
+##' ped <- dat$ped
+##' envirX <- dat$x
+##' # Fit the data under the assuption that there are 3 clusters
+##' fit.pc <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
+##' print(fit.pc)
 ##' @export
 plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
 
@@ -26,7 +33,7 @@ plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
         temp <- merge(PCA1,clusters,by='row.names')[,-1]
         colnames(temp) <- c('PCA1','clusters')
         temp[,2] <- factor(temp[,2])
-        p <- qplot(PCA1,fill=clusters,data=temp,geom="density")+geom_histogram(aes(y=..count..),binwidth=0.2)
+        qplot(PCA1,fill=clusters,data=temp,geom="density")+geom_histogram(aes(y=..count..),binwidth=0.2)
   }
     
   if(type=='scat'){
@@ -47,7 +54,7 @@ plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
       temp <- merge(cbind(segmean,PCA1),clusters,by='row.names')[,-1]
       colnames(temp) <- c('Mean','PCA1','clusters')
       temp[,3] <- factor(temp[,3])
-      p <- qplot(Mean,PCA1,color=clusters,data=temp)
+      qplot(Mean,PCA1,color=clusters,data=temp)
   }
 
   if(type=='sil'){
