@@ -3,9 +3,7 @@ Type: Package
 Title: An implementation for association analysis with CNV data.
 Version: 0.1
 Date: 2013-08-03
-Author: Meiling Liu <meiling.sta@gmail.com>,
-    Sungho Won <sunghow@gmail.com>,
-    Weicheng Zhu <weicheng@dreamhunter.me>
+Author: Meiling Liu, Sungho Won and Weicheng Zhu
 Maintainer: Meiling Liu <meiling.sta@gmail.com>
 Description: An implementation for association analysis with CNV data in R. It
     provides two methods for association study: first, the observed probe
@@ -13,7 +11,7 @@ Description: An implementation for association analysis with CNV data in R. It
     with phenotypes of interest. Second, the most probable copy number is
     estimated with the proposed likelihood and the association of the most
     probable copy number with phenotype is tested. This method can be applied
-    to the extended families.
+    to both the independent and correlated population.
 License: MIT
 Depends:
     Rcpp (>= 0.10.4),

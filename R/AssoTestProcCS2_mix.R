@@ -149,36 +149,33 @@ CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, 
 
 
 
-##' This function tests the association of CNV with continuous trait based on CNV-linear mixed model. Two statistics are provided for different strategies with the intensity measurement.
+##' This function tests the association of CNV with continuous trait of interest. Two statistics are provided for different strategies with the intensity measurement.
 ##'
-##' @title CNV association testing
-##' @param signal The matrix of intensity measurements. The rownames must be cosistent with the Individual ID in PED file.
+##' @title CNV association test procedure
+##' @param signal The matrix of intensity measurements. The row names must be consistent with the Individual ID in PED file.
 ##' @param ped The PED file which follows the format defined in PLINK. 
-##' @param envirX The matrix of enviromental variables. The intercept should be included in it if it's necessary in further analysis.
+##' @param envirX The matrix of environmental variables. The intercept should be included if it's needed.
 ##' @param phi The matrix of correlation between individuals. 
 ##' @param N Number of clusters one wants to fit to the data. N needs to be larger than 1 and if it is 1, error will be returned.
-##' @param varSelection Factor. For specifying how to handle the intensity values. It must take value on 'RAW', 'PC1', 'PC.9' and 'MEAN'. If the value is 'RAW', then the raw intensity value will be used. If it is 'PC.9' (the default), then the first several PCA scores which account for 90% of all the variance will be used. If the value is 'PC1', then the first PCA scores will be used.If the value is 'MEAN', the mean of all the probes will be used. 
-##' @param H0 Logicals. If the value is TRUE (the default), then the parameters  will be estimated under null hypotheis only. If the value is FALSE, then the parameters will be estimated under both null hypothesis and alternative hypothesis. 
-##' @param threshold Optinal number of convergence threshold. The iteration stops if the absolute difference of loglikelihood between successive iterations is less than it. The default threshold 1e-05 will be used if it's missing.
-##' @param itermax Optinal. The iteration stops if the time of iteration is large than this value. The default number 8 will be used if it's missing.
+##' @param varSelection Factor. For specifying how to handle the intensity values. It must take value on 'RAW', 'PC.9', 'PC1'and 'MEAN'. If the value is 'RAW', then the raw intensity value will be used. If it is 'PC.9', then the first several PCA scores which account for 90\% of all the variance will be used. If the value is 'PC1', then the first PCA scores will be used. If the value is 'MEAN', the mean of all the probes will be used. 
+##' @param H0 Logicals. If the value is TRUE (the default), then the parameters  will be estimated under null hypothesis only. If the value is FALSE, then the parameters will be estimated under both null hypothesis and alternative hypothesis. 
+##' @param threshold Optional number of convergence threshold. The iteration stops if the absolute difference of log likelihood between successive iterations is less than it. The default threshold 1e-05 will be used if it's missing.
+##' @param itermax Optional. The iteration stops if the times of iteration is large than this value. The default number 8 will be used if it's missing.
 ##' @param thresEM Optional number of convergence threshold in the EM (expectation-maximization method) procedure. The default threshold 0.005 will be used if it's missing.
 ##' @param thresAI Optional number of convergence threshold in the AI (average information method) procedure. The default threshold 1e-05 will be used if it's missing.
-##' @return It returns object of class 'asso'. 'asso' is a list containing at least model estimation results under H0, the results under H1 will be included if the value of {H0} is FALSE.
-##' \item{asso.test}{The association test statistics and p-value from score test. One is based on the estimate of the most probable copy numbers, denoted by T1. Another one is based on the probe intensity measurement, denoted by T2.}
+##' @return It returns object of class 'asso'. The results under H1 will be included if the value of {H0} is FALSE.
+##' \item{asso.test}{The association test statistics and p-values from score tests. One is based on the estimate of the most probable copy numbers, denoted by T1. Another one is based on the probe intensity measurement, denoted by T2.}
 ##' \item{para.H0}{The parameter estimations for the best fit under H0.}
 ##' \item{clus.H0}{The clustering assignment for each individual under H0.}
 ##' \item{para.H1}{The parameter estimations for the best fit under H1.}
 ##' \item{clus.H1}{The clustering assignment for each individual under H1.}
-##' @author Meiling Liu \email{meiling.sta@@gmail.com} and Sungho Won \email{sunghow@@gmail.com}
+##' @author Meiling Liu, Sungho Won and Weicheng Zhu
 ##' @examples
 ##' # Load data and correlation matrix
-##' data(dat)
+##' data(simudat)
 ##' data(phi)
-##' signal <- dat$Inx
-##' ped <- dat$ped
-##' envirX <- dat$x
 ##' # Fit the data under the assuption that there are 3 clusters
-##' # fit.pc <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
+##' fit.pc <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
 ##' @export
 
 AssoTestProc <- function(signal,ped,envirX,phi,N,varSelection=c('RAW','PC.9','PC1','MEAN'),H0=TRUE,threshold=1e-05,itermax=8,thresEM=0.005,thresAI=1e-05){  
@@ -290,17 +287,14 @@ AssoTestProc <- function(signal,ped,envirX,phi,N,varSelection=c('RAW','PC.9','PC
 ##' @title Prints association study results
 ##' @param x The association study results obtained from the AssoTestProc.
 ##' @param ... Usual arguments passed to the print function.
-##' @author Meiling Liu \email{meiling.sta@@gmail.com} and Sungho Won \email{sunghow@@gmail.com}
+##' @author Meiling Liu 
 ##' @examples
 ##' # Load data and correlation matrix
-##' data(dat)
+##' data(simudat)
 ##' data(phi)
-##' signal <- dat$Inx
-##' ped <- dat$ped
-##' envirX <- dat$x
-##' # Fit the data under the assuption that there are 3 clusters
-##' # fit.pc <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
-##' # print(fit.pc)
+##' # Fit the data under the assumption that there are 3 clusters
+##' asso.fit <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
+##' print(asso.fit)
 ##' @export
 print.asso <- function(x, ...){
 

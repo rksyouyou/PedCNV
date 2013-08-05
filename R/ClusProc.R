@@ -63,28 +63,27 @@ ClusProc0 <- function(signal,Num,threshold,thresMAF,cut,itermax){
     return(list(logL=logL,sil=sil)) 
 }
 
-##' This function chooses the optimal number of clusters and provides the assignments of each individuals under the optium clustering number. 
+##' This function chooses the optimal number of clusters and provides the assignments of each individuals under the optimum clustering number. 
 ##' @title CNV clustering Procedure
-##' @param signal The matrix of intensity measurements. The rownames must be cosistent with the Individual ID in PED file.
+##' @param signal The matrix of intensity measurements. The row names must be consistent with the Individual ID in PED file.
 ##' @param N Number of clusters one wants to fit to the data. N needs to be larger than 1 and if it is 1, error will be returned.
-##' @param varSelection Factor. For specifying how to handle the intensity values. It must take value on 'RAW', 'PC1', 'PC.9' and 'MEAN'. If the value is 'RAW', then the raw intensity value will be used. If it is 'PC.9' (the default), then the first several PCA scores which account for 90% of all the variance will be used. If the value is 'PC1', then the first PCA scores will be used.If the value is 'MEAN', the mean of all the probes will be used. 
-##' @param threshold Optinal number of convergence threshold. The iteration stops if the absolute difference of loglikelihood between successive iterations is less than it. The default threshold 1e-05 will be used if it's missing.
-##' @param itermax Optinal. The iteration stops if the time of iteration is large than this value. The default number 8 will be used if it's missing.
+##' @param  varSelection Factor. For specifying how to handle the intensity values. It must take value on 'RAW', 'PC.9', 'PC1'and 'MEAN'. If the value is 'RAW', then the raw intensity value will be used. If it is 'PC.9', then the first several PCA scores which account for 90\% of all the variance will be used. If the value is 'PC1', then the first PCA scores will be used. If the value is 'MEAN', the mean of all the probes will be used. 
+##' @param threshold Optional number of convergence threshold. The iteration stops if the absolute difference of log likelihood between successive iterations is less than it. The default threshold 1e-05 will be used if it's missing.
+##' @param itermax Optional. The iteration stops if the time of iteration is large than this value. The default number 8 will be used if it's missing.
 ##' @param adjust Logicals, If TRUE (default), the result will be adjusted by the silhouette score. 
-##' @param thresMAF Number of the  minor allele frenquence. Since this procedure is mainly focus on the common variants, so if the frequence of a certain group is smaller than this value, the individuals in this group will be abandoned in the following analysis.
+##' @param thresMAF Number of the  minor allele frequency. Since this procedure is mainly focus on the common variants, so if the frequency of a certain group is smaller than this value, the individuals in this group will be abandoned in the following analysis.
 ##' @param scale Logicals. If TRUE, the signal will be scale by using sample mean and sample variance by columns before further data-processing.
-##' @return It returns object of class 'clust'. 'clust' is a list containing at least following componets:
-##' \item{clusNum}{The optimal number of clusters among give parameter {N}}
-##' \item{silWidth}{Silouette related results}
-##' @author Meiling Liu \email{meiling.sta@@gmail.com} and Sungho Won \email{sunghow@@gmail.com}
+##' @return It returns object of class 'clust'. 'clust' is a list containing following components:
+##' \item{clusNum}{The optimal number of clusters among give parameter {N}.}
+##' \item{silWidth}{Silhouette related results.}
+##' @author Meiling Liu 
 ##' @examples
 ##' # Load data and correlation matrix
-##' data(dat)
-##' signal <- dat$Inx
-##' # 
-##' clus.fit <- ClusProc(signal=signal,N=2:3,varSelection='PC.9')
+##' data(simudat)
+##' # Fit the data under the given clustering numbers
+##' clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
 ##' @export
-ClusProc <- function(signal,N,varSelection=c('RAW','PC.9','PC1','MEAN'),threshold=1e-05,itermax=8,adjust=TRUE,thresMAF=0.01,scale=FALSE){
+ClusProc <- function(signal,N=2:6,varSelection=c('RAW','PC.9','PC1','MEAN'),threshold=1e-05,itermax=8,adjust=TRUE,thresMAF=0.01,scale=FALSE){
 
     sX0 <- as.matrix(signal)
     if(scale) sX <- scale(sX0) else sX <- sX0
@@ -152,9 +151,10 @@ ClusProc <- function(signal,N,varSelection=c('RAW','PC.9','PC1','MEAN'),threshol
 ##' @author Meiling Liu \email{meiling.sta@@gmail.com} and Sungho Won \email{sunghow@@gmail.com}
 ##' @examples
 ##' # Load data and correlation matrix
-##' data(dat)
-##' signal <- dat$Inx
-##' # 
+##' data(simudat)
+##' # Fit the data under the given clustering numbers
+##' clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
+##' print(clus.fit)
 ##' @export
 print.clust <- function(x, ...) {
     adjust <- x$adjust
