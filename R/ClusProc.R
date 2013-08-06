@@ -79,9 +79,9 @@ ClusProc0 <- function(signal,Num,threshold,thresMAF,cut,itermax){
 ##' @author Meiling Liu 
 ##' @examples
 ##' # Load data and correlation matrix
-##' data(simudat)
+##' #data(simudat)
 ##' # Fit the data under the given clustering numbers
-##' clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
+##' #clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
 ##' @export
 ClusProc <- function(signal,N=2:6,varSelection=c('RAW','PC.9','PC1','MEAN'),threshold=1e-05,itermax=8,adjust=TRUE,thresMAF=0.01,scale=FALSE){
 
@@ -149,12 +149,13 @@ ClusProc <- function(signal,N=2:6,varSelection=c('RAW','PC.9','PC1','MEAN'),thre
 ##' @param x The clustering results obtained from the ClusProc.
 ##' @param ... Usual arguments passed to the print function.
 ##' @author Meiling Liu \email{meiling.sta@@gmail.com} and Sungho Won \email{sunghow@@gmail.com}
+##' @method print clust
 ##' @examples
 ##' # Load data and correlation matrix
-##' data(simudat)
+##' # data(simudat)
 ##' # Fit the data under the given clustering numbers
-##' clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
-##' print(clus.fit)
+##' # clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
+##' # print(clus.fit)
 ##' @export
 print.clust <- function(x, ...) {
     adjust <- x$adjust

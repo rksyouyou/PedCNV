@@ -175,7 +175,7 @@ CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, 
 ##' data(simudat)
 ##' data(phi)
 ##' # Fit the data under the assuption that there are 3 clusters
-##' fit.pc <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
+##' #fit.pc <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
 ##' @export
 
 AssoTestProc <- function(signal,ped,envirX,phi,N,varSelection=c('RAW','PC.9','PC1','MEAN'),H0=TRUE,threshold=1e-05,itermax=8,thresEM=0.005,thresAI=1e-05){  
@@ -287,14 +287,15 @@ AssoTestProc <- function(signal,ped,envirX,phi,N,varSelection=c('RAW','PC.9','PC
 ##' @title Prints association study results
 ##' @param x The association study results obtained from the AssoTestProc.
 ##' @param ... Usual arguments passed to the print function.
-##' @author Meiling Liu 
+##' @author Meiling Liu
+##' @method print asso
 ##' @examples
 ##' # Load data and correlation matrix
-##' data(simudat)
-##' data(phi)
+##' #data(simudat)
+##' #data(phi)
 ##' # Fit the data under the assumption that there are 3 clusters
-##' asso.fit <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
-##' print(asso.fit)
+##' #asso.fit <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
+##' #print(asso.fit)
 ##' @export
 print.asso <- function(x, ...){
 

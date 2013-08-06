@@ -5,13 +5,14 @@
 ##' @param type Factor. For specifying the plot type. It must take value on 'histo', 'scat' and 'sil'. If the value is 'histo', then the histogram of the first PC score of the intensity measurement will be made. If the value is 'scat', then the scatter plot of the first PC score of the intensity measurement v.s the mean of the intensity measurement will be made. If the value is 'sil', then the silhouette plot will be made.
 ##' @param adjust Logicals. If TRUE (default), the silhouette-adjusted clustering result will be used. If FALSE, the initial clustering result will be used.
 ##' @param ... Usual arguments passed to the qplot function.
-##' @author Meiling Liu 
+##' @author Meiling Liu
+##' @method plot clust
 ##' @examples
 ##' # Load data and correlation matrix
-##' data(simudat)
+##' # data(simudat)
 ##' # Fit the data under the given clustering numbers
-##' clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
-##' plot(clus.fit,type='histo')
+##' # clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
+##' # plot(clus.fit,type='histo')
 ##' @export
 plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
 
