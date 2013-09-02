@@ -25,3 +25,4 @@ Collate:
     'cnvlmm_plot.R'
     'silWidth.R'
     'docs.R'
+    'score_test.R'

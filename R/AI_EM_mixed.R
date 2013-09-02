@@ -52,49 +52,6 @@ doPolyGenic<-function(envirX,snp,pheno,phi,H0, thresEM,itrmax=20,thresAI,phiInv)
 }
 
 
-## Test Part################
-
-## Rao's score test statistic with the most probable copy numbers
-RSTe<- function(envirX,snp,pheno,alpha,Invcov){
-
-  S  <- length(pheno)
-  e <- pheno-envirX%*%alpha
-  nve <- t(snp)%*%Invcov%*%e
-  nvn <- t(snp)%*%Invcov%*%snp
-  nvx <- t(snp)%*%Invcov%*%envirX
-  xvx <- t(envirX)%*%Invcov%*%envirX
-  Trs <- nve%*%solve(nvn-nvx%*%solve(xvx)%*%t(nvx))%*%t(nve)
-  pv <- 1-pchisq(Trs,1)
-  return(list(STEs=Trs,STEp=pv))
-
-}
-
-##  Rao's score test statistic with the probe intensity measurements
-
-
-RSTim<- function(envirX,signal,pheno,alpha,InvW,Invcov){
-
-    temp <- scale(signal)
-    R <- cor(t(temp))
-    S  <- length(pheno)
-    N1 <- matrix(1,S,1)
-    vz <- Invcov%*%envirX
-
-    s1 <- envirX%*%solve(t(envirX)%*%vz)%*%t(vz)
-    InvWN1 <- InvW%*%N1
-    s2 <- N1%*%solve(t(N1)%*%InvWN1)%*%t(InvWN1)
-    t3 <- t(pheno)%*%t(diag(S)-s1)%*%Invcov%*%(diag(S)-s2)
-    t1 <- (diag(S)-s2)%*%R
-    t2 <- sum(diag(t1%*%t(diag(S)-s2)%*%Invcov%*%(diag(S)-s1)))
-    u <- t3%*%signal
-    psi <- t(signal)%*%t(diag(S)-s2)%*%(diag(S)-s2)%*%signal
-    v <- t2/sum(diag(t1))*psi
-    Trs <- u%*%solve(v)%*%t(u)
-    df <- qr(v)$rank
-    pv<- 1-pchisq(Trs,df)
-
-    return(list(STIMs=Trs,STIMp=pv,df=df))
-}
 
 
 

@@ -1,24 +1,27 @@
 \name{print.clust}
 \alias{print.clust}
-\title{TODO}
+\title{Prints clustering results}
 \usage{
   \method{print}{clust} (x, ...)
 }
 \arguments{
-  \item{x}{TODO}
+  \item{x}{The clustering results obtained from the
+  \code{\link{ClusProc}}.}
 
-  \item{...}{TODO}
-}
-\value{
-  TODO
+  \item{...}{Usual arguments passed to the print function.}
 }
 \description{
-  Description
+  Prints formatted results returned by
+  \code{\link{ClusProc}}.
 }
-\details{
-  Detail
+\examples{
+# Load data and correlation matrix
+data(simudat)
+# Fit the data under the given clustering numbers
+clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
+print(clus.fit)
 }
 \author{
-  Meiling
+  Meiling Liu and Sungho Won
 }
 

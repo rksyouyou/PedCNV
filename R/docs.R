@@ -4,11 +4,13 @@
 ##' Package: \tab PedCNV\cr
 ##' Type: \tab Package\cr
 ##' Version: \tab 0.1\cr
-##' Date: \tab 2013-08-03\cr
+##' Date: \tab 2013-09-03\cr
 ##' License: \tab MIT \cr
 ##' Main functions:
 ##' \tab AssoTestProc \cr
 ##' \tab ClusProc \cr
+##' \tab STE \cr
+##' \tab STIM \cr
 ##' \tab print.asso\cr
 ##' \tab print.clus\cr
 ##' \tab plot.clus\cr
@@ -22,7 +24,7 @@
 ##' @references On the association analysis of CNV data: fast and efficient method with family-based samples
 NULL
 
-##' Simulated data. It contains CNV intensity measurements, environment variables and PED file which follows the same format defined in PLINK.
+##' Simulated data. It contains CNV intensity measurements, environment variables and FAM file which follows the same format defined in PLINK.
 ##' 
 ##' @title CNV simulated data
 ##' @name simudat
@@ -32,12 +34,12 @@ NULL
 ##' data(simudat)
 NULL
 
-##' Empirical correlation matrix. This correlation matrix is calculated based on the family structure in simudat by using omic data analysis toolkit WISARD. This toolkit will eventually be included in PedCNV.
+##' Empirical/kinship correlation matrix between individuals. This correlation matrix can be calculated based on the familial relationship between individuals or large-scale SNP data by omic data analysis toolkit WISARD. The free software WISARD can be downloaded from \url{http://biostat.cau.ac.kr/wisard/}. If correlation matrix is estimated with the large-scale SNP data, the proposed method becomes robust under the presence of population substructure.
 ##' 
 ##' @name phi
 ##' @title Empirical correlation matrix
 ##' @docType data
-##' @author Meiling 
+##' @author Meiling Liu
 ##' @references WISARD \url{http://biostat.cau.ac.kr/wisard/}
 ##' @examples
 ##' data(phi)

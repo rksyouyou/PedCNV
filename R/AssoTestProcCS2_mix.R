@@ -152,38 +152,35 @@ CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, 
 ##' This function tests the association of CNV with continuous trait of interest. Two statistics are provided for different strategies with the intensity measurement.
 ##'
 ##' @title CNV association test procedure
-##' @param signal The matrix of intensity measurements. The row names must be consistent with the Individual ID in PED file.
-##' @param ped The PED file which follows the format defined in PLINK. 
-##' @param envirX The matrix of environmental variables. The intercept should be included if it's needed.
-##' @param phi The matrix of correlation between individuals. 
-##' @param N Number of clusters one wants to fit to the data. N needs to be larger than 1 and if it is 1, error will be returned.
+##' @param signal The matrix of intensity measurements. The row names must be consistent with the Individual ID in fam file.
+##' @param fam The FAM file which follows the format defined in PLINK. 
+##' @param envirX The matrix of environmental variables. The intercept is automatically included and it does not need to be in this matrix.
+##' @param phi The correlation matrix between individuals. It can be built with the kinship coefficient or the estimated correlation matrix with SNP data. Free software that builds this matrix is available, and one of them can be downloaded at \url{http://biostat.ac.kr/wisard} The default is an identity matrix and it is for independent samples.
+##' @param N Number of clusters one wants to fit to the data. N needs to be larger than 1 and if it is 1, error will be returned. It can be estimated with the function \code{\link{ClusProc}}.
 ##' @param varSelection Factor. For specifying how to handle the intensity values. It must take value on 'RAW', 'PC.9', 'PC1'and 'MEAN'. If the value is 'RAW', then the raw intensity value will be used. If it is 'PC.9', then the first several PCA scores which account for 90\% of all the variance will be used. If the value is 'PC1', then the first PCA scores will be used. If the value is 'MEAN', the mean of all the probes will be used. 
-##' @param H0 Logicals. If the value is TRUE (the default), then the parameters  will be estimated under null hypothesis only. If the value is FALSE, then the parameters will be estimated under both null hypothesis and alternative hypothesis. 
+##' @param H0 Logicals. If it is TRUE (the default), all parameters are estimated under the assumption that there is no genetic association between CNV and phenotypes. If it is FALSE, parameters are estimated under the null or alternative hypothesis.
 ##' @param threshold Optional number of convergence threshold. The iteration stops if the absolute difference of log likelihood between successive iterations is less than it. The default threshold 1e-05 will be used if it's missing.
 ##' @param itermax Optional. The iteration stops if the times of iteration is large than this value. The default number 8 will be used if it's missing.
 ##' @param thresEM Optional number of convergence threshold in the EM (expectation-maximization method) procedure. The default threshold 0.005 will be used if it's missing.
 ##' @param thresAI Optional number of convergence threshold in the AI (average information method) procedure. The default threshold 1e-05 will be used if it's missing.
-##' @return It returns object of class 'asso'. The results under H1 will be included if the value of {H0} is FALSE.
-##' \item{asso.test}{The association test statistics and p-values from score tests. One is based on the estimate of the most probable copy numbers, denoted by T1. Another one is based on the probe intensity measurement, denoted by T2.}
-##' \item{para.H0}{The parameter estimations for the best fit under H0.}
-##' \item{clus.H0}{The clustering assignment for each individual under H0.}
-##' \item{para.H1}{The parameter estimations for the best fit under H1.}
-##' \item{clus.H1}{The clustering assignment for each individual under H1.}
+##' @return It returns object of class 'asso'. The result is obtained under the null hypothesis if H0 is TRUE, otherwise the result is obtained under null or alternative hypothesis.
+##' \item{para}{The parameter estimations for the best fit.}
+##' \item{clusRes}{The clustering assignment for each individual.}
 ##' @author Meiling Liu, Sungho Won and Weicheng Zhu
 ##' @examples
 ##' # Load data and correlation matrix
 ##' data(simudat)
 ##' data(phi)
-##' # Fit the data under the assuption that there are 3 clusters
-##' #fit.pc <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
+##' # Fit the data under the assumption that there are 3 clusters
+##' fit.pc <- AssoTestProc(signal=signal,fam=fam,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
 ##' @export
 
-AssoTestProc <- function(signal,ped,envirX,phi,N,varSelection=c('RAW','PC.9','PC1','MEAN'),H0=TRUE,threshold=1e-05,itermax=8,thresEM=0.005,thresAI=1e-05){  
+AssoTestProc <- function(signal,fam,envirX,phi,N,varSelection=c('RAW','PC.9','PC1','MEAN'),H0=TRUE,threshold=1e-05,itermax=8,thresEM=0.005,thresAI=1e-05){  
 
 
     rn_signal <- row.names(signal)
     rn_envirX <- row.names(envirX)
-    iid <- ped[,2]
+    iid <- fam[,2]
     if(sum(!(rn_signal%in%iid))>0) {
         cat('The row name of signal data is not coincident with individual ID!\n')
         return(0)
@@ -192,9 +189,13 @@ AssoTestProc <- function(signal,ped,envirX,phi,N,varSelection=c('RAW','PC.9','PC
         cat('The row name of covariant data is not coincident with individual ID!\n')
         return(0)
     }
-    len <- sum(!duplicated(ped[,1]))
-    pheno <- as.numeric(ped[,6])
+
+    envirX <- cbind(1,envirX)
+    len <- sum(!duplicated(fam[,1]))
+    pheno <- as.numeric(fam[,6])
     S <- length(pheno)
+    if(is.null(phi)) phi <- diag(S)
+    
     p <- rep(1/N,N)
     INsnp <- rbinom(S,2,p)
     X  <- cbind(envirX,INsnp)
@@ -244,34 +245,20 @@ AssoTestProc <- function(signal,ped,envirX,phi,N,varSelection=c('RAW','PC.9','PC
         bet <- fit$coefficient[1]
         alpha <- fit$coefficient[-1]
         res_H1<- CNVtypeAnay(pX=pX,pheno=pheno,envirX=envirX,phi=phi,S=S,FM=len,N=N,threshold=threshold,bet=bet,alpha=alpha,sig2=in_sig2,sig2g=in_sig2g,H0=FALSE,thresEM=thresEM,thresAI=thresAI,itermax=itermax)
-        logL <- res_H1$logL
-    }
-    
-    fit <- lm(pheno~envirX-1)
-    bet <- 0
-    alpha <- fit$coefficient
-    res_H0 <- CNVtypeAnay(pX=pX,pheno=pheno,envirX=envirX,phi=phi,S=S,FM=len,N=N,threshold=threshold,bet=bet,alpha=alpha,sig2=in_sig2,sig2g=in_sig2g,H0=TRUE,thresEM=thresEM,thresAI=thresAI,itermax=itermax)
-    
-    alpha_H0<- res_H0$alpha
-    sig2_H0 <- res_H0$sig2
-    sig2g_H0 <- res_H0$sig2g
-    logL_H0 <- res_H0$logL
-    clusRes <- res_H0$clusRes
-  ##  Rao's score test statistic with the most probable copy numbers
-    Invcov <- solve(sig2g_H0*phi+sig2_H0*diag(S))
-    res <- RSTe(envirX=envirX,snp=clusRes,pheno=pheno,alpha=alpha_H0,Invcov=Invcov)
-    STEs <- res$STEs
-    STEp <- res$STEp
-    res <- RSTim(envirX=envirX,signal=signal,pheno=pheno,alpha=alpha_H0,Invcov=Invcov,InvW=phiInv)
-    STIMs <- res$STIMs
-    STIMp <- res$STIMp
+     } else {
+         fit <- lm(pheno~envirX-1)
+         bet <- 0
+         alpha <- fit$coefficient
+         res_H0 <- CNVtypeAnay(pX=pX,pheno=pheno,envirX=envirX,phi=phi,S=S,FM=len,N=N,threshold=threshold,bet=bet,alpha=alpha,sig2=in_sig2,sig2g=in_sig2g,H0=TRUE,thresEM=thresEM,thresAI=thresAI,itermax=itermax)
+}
+
     if(H0){
-        resfinal <- list(asso.test=list(T1s=STEs,T1p=STEp,T2s=STIMs,T2p=STIMp),para.H0=list(bet=res_H0$bet,alpha=res_H0$alpha,sig2=res_H0$sig2,sig2g=res_H0$sig2g),clus.H0=list(clusRes=res_H0$clusRes))
+        resfinal <- list(para=list(bet=res_H0$bet,alpha=res_H0$alpha,sig2=res_H0$sig2,sig2g=res_H0$sig2g),clusRes=res_H0$clusRes,H0=H0)
     } else
         {
-      resfinal <- list(asso.test=list(T1s=STEs,T1p=STEp,T2s=STIMs,T2p=STIMp),para.H0=list(bet=res_H0$bet,alpha=res_H0$alpha,sig2=res_H0$sig2,sig2g=res_H0$sig2g),clus.H0=list(clusRes=res_H0$clusRes),para.H1=list(bet=res_H1$bet,alpha=res_H1$alpha,sig2=res_H1$sig2,sig2g=res_H1$sig2g),clus.H1=list(clusRes=res_H1$clusRes))
+      resfinal <- list(para=list(bet=res_H1$bet,alpha=res_H1$alpha,sig2=res_H1$sig2,sig2g=res_H1$sig2g),clusRes=res_H1$clusRes,H0=H0)
   }
- 
+
     class(resfinal) <- 'asso'
     return(resfinal)
 }
@@ -282,44 +269,31 @@ AssoTestProc <- function(signal,ped,envirX,phi,N,varSelection=c('RAW','PC.9','PC
 
 
 
-##' Prints formatted results from the association study returned by AssoTestProc.
+##' Prints formatted results from the association study returned by \code{\link{AssoTestProc}}.
 ##'
 ##' @title Prints association study results
-##' @param x The association study results obtained from the AssoTestProc.
+##' @param x The association study results obtained from the \code{\link{AssoTestProc}}.
 ##' @param ... Usual arguments passed to the print function.
 ##' @author Meiling Liu
 ##' @method print asso
 ##' @examples
 ##' # Load data and correlation matrix
-##' #data(simudat)
-##' #data(phi)
+##' data(simudat)
+##' data(phi)
 ##' # Fit the data under the assumption that there are 3 clusters
-##' #asso.fit <- AssoTestProc(signal=signal,ped=ped,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
-##' #print(asso.fit)
+##' asso.fit <- AssoTestProc(signal=signal,fam=fam,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
+##' print(asso.fit)
 ##' @export
 print.asso <- function(x, ...){
 
-    cat('Pvalue of Association Test\n')
-    cat('Using the most probable copy number:',x$asso.test$T1p,'.\n')
-    cat('Using the probe intensity measures:',x$asso.test$T2p,'.\n')
+    if(x$H0) cat('\n\n Under H0:\n') else 
+    cat('\n\n Under H0 and H1:\n')
 
-    cat('\n\n Under H0:\n')
     cat('The coefficent:\n')
-    temp <- c(bet=0,alpha=round(x$para.H0$alpha,4))
+    temp <- c(bet=0,alpha=round(x$para$alpha,4))
     print(temp,quote=FALSE,row.names=FALSE)
     cat('The estimated variance:\n')
-    temp <- data.frame(sig2=x$para.H0$sig2,sig2g=x$para.H0$sig2g)
+    temp <- data.frame(sig2=x$para$sig2,sig2g=x$para$sig2g)
     print(temp,quote=FALSE,row.names=FALSE)
-    ## cat('The loglikelihood function value:',round(x$H0$logL,4),'.\n')
-    if(length(x$para.H1)>1){
-        cat('\n\n Under H1:\n')
-        cat('The coefficent:\n')
-        temp <- c(bet=round(x$para.H1$bet,4),alpha=round(x$para.H1$alpha,4))
-        print(temp,quote=FALSE,row.names=FALSE)
-        cat('The estimated variance:\n')
-        temp <- data.frame(sig2=x$para.H1$sig2,sig2g=x$para.H1$sig2g)
-        print(temp,quote=FALSE,row.names=FALSE)
-        ## cat('The loglikelihood function value:',round(x$H1$logL,4),'.\n')
-    }
 }
 
