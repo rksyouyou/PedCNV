@@ -1,6 +1,5 @@
-ClusProc0 <- function(signal,Num,threshold,thresMAF,cut,itermax){
+ClusProc0 <- function(signal,signal.mean,Num,threshold,thresMAF,cut,itermax,thres_sil){
 
-    thres_sil <- 0.01
     seed<- sample(c(1:1000000),1)
     print(paste0("seed is ", seed))
     set.seed(seed)
@@ -58,6 +57,14 @@ ClusProc0 <- function(signal,Num,threshold,thresMAF,cut,itermax){
     
     logL <- logL-1/2*S*cut*log(2*pi)
     print(paste("The logliklihood is",logL,"when clustering number is ",Num))
+
+    Sdata$clusRes <- Sdata$clusRes+Num
+    old.order.mean <- as.matrix(tapply(signal.mean,Sdata$clusRes,mean))
+    old.order.id <- (Num+1):(2*Num)
+    mid <- sort(old.order.mean,index.return=TRUE)$ix
+    for(i in 1:Num)
+        Sdata[Sdata$clusRes==old.order.id[mid[i]],]$clusRes <- i
+    rownames(Sdata) <- rownames(signal.mean)
     
     sil <- silWidth(Sdata,thres_sil=thres_sil,thres_MAF=thresMAF)
     return(list(logL=logL,sil=sil)) 
@@ -88,7 +95,7 @@ ClusProc0 <- function(signal,Num,threshold,thresMAF,cut,itermax){
 ##' # Fit the data under the given clustering numbers
 ##' clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
 ##' @export
-ClusProc <- function(signal,N=2:6,varSelection=c('RAW','PC.9','PC1','MEAN'),threshold=1e-05,itermax=8,adjust=TRUE,thresMAF=0.01,scale=FALSE){
+ClusProc <- function(signal,N=2:6,varSelection=c('RAW','PC.9','PC1','MEAN'),threshold=1e-05,itermax=8,adjust=TRUE,thresMAF=0.01,scale=FALSE,thres_sil=0.01){
 
     sX0 <- as.matrix(signal)
     if(scale) sX <- scale(sX0) else sX <- sX0
@@ -118,12 +125,15 @@ ClusProc <- function(signal,N=2:6,varSelection=c('RAW','PC.9','PC1','MEAN'),thre
     if(varSelection=='PC1'){
         pX <- prcomp(sX)$x[,1]
     }
-  
+
+    signal.mean <- as.matrix(apply(sX0,1,mean))
+    rownames(signal.mean) <- rownames(sX0)
+
     if(1%in%N) stop('The assigned clustering number must be larger than 1!')
     res <- list()
     for(i in 1:length(N)){
         Num <- N[i]
-        res[[i]] <- ClusProc0(signal=pX,Num=Num,threshold=threshold,thresMAF=thresMAF,cut=cut,itermax=itermax)
+        res[[i]] <- ClusProc0(signal=pX,signal.mean=signal.mean,Num=Num,threshold=threshold,thresMAF=thresMAF,cut=cut,itermax=itermax,thres_sil=thres_sil)
     }
     
     Nlen <- length(N)
