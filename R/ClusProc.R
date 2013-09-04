@@ -140,11 +140,11 @@ ClusProc <- function(signal,N=2:6,varSelection=c('RAW','PC.9','PC1','MEAN'),thre
     silR <- rep(NA,Nlen)
     
     for(i in 1:Nlen)
-        if(adjust) silR[i] <- res[[i]]$sil$silMean_adjust else silR[i] <- res[[i]]$sil$silMean
+        if(adjust) silR[i] <- res[[i]]$sil$adjusted$silMean.adjust else silR[i] <- res[[i]]$sil$unadjusted$silMean
     if(adjust) {
         N <- rep(NA,Nlen)
         for(i in 1:Nlen)
-            N[i] <- res[[i]]$sil$clusNum_adjust
+            N[i] <- res[[i]]$sil$adjusted$clusNum.adjust
     }
     
     n <- which(silR==max(silR))
@@ -174,8 +174,8 @@ ClusProc <- function(signal,N=2:6,varSelection=c('RAW','PC.9','PC1','MEAN'),thre
 ##' @export
 print.clust <- function(x, ...) {
     adjust <- x$adjust
-    if(adjust)   res <- data.frame(clusNum_adjust=x$silWidth$clusNum_adjust,silMean_adjust=round(x$silWidth$silMean_adjust,4)) else
-    res <- data.frame(clusNum=x$silWidth$clusNum,silMean=round(x$silWidth$silMean,4)) 
+    if(adjust)   res <- data.frame(clusNum.adjust=x$silWidth$adjusted$clusNum.adjust,silMean.adjust=round(x$silWidth$adjusted$silMean.adjust,4)) else
+    res <- data.frame(clusNum=x$silWidth$unadjusted$clusNum,silMean=round(x$silWidth$unadjusted$silMean,4)) 
     print(res,quote=FALSE,row.names=FALSE)
 }
 

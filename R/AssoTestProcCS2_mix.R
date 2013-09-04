@@ -1,5 +1,4 @@
 
-
 Inde <- function(H0=H0,pheno=pheno,envirX=envirX,clusRes=clusRes,S=S){
     print('The individuals are independent, LM is used!')
     ## changed
@@ -21,7 +20,7 @@ Inde <- function(H0=H0,pheno=pheno,envirX=envirX,clusRes=clusRes,S=S){
 }
 
 
-CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, sig2g,H0,thresAI,thresEM,itermax){
+CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, sig2g,H0,thresAI,thresEM,itermax,signal,varSelection){
 
   seed<- sample(c(1:1000000),1)
   ## print(paste0("seed is ", seed))
@@ -38,22 +37,23 @@ CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, 
   q <- dim(pX)[2]
 
 
-  ires <- ClusProc(signal=pX,N=N,varSelection='RAW')
+  ires <-  ClusProc(signal=signal,N=N,varSelection=varSelection,adjust=TRUE,thresMAF=0,scale=FALSE,thres_sil=0)
+
   part1 <- data.frame(X=pX)
-  part2 <- data.frame(Kn=ires$silWidth$silRes)
+  part2 <- data.frame(Kn=ires$silWidth$adjusted$silRes.adjust)
   temp <- part2[match(rownames(part1),rownames(part2)),]
   KX <- cbind(X=part1,Kn=temp[,1])
 
+  ## clustemp <- KX$Kn+N
+  ## t <- rep(NA,3)
+  ## for(i in 1:N)
+  ##   mu1[i] <- mean(apply(as.matrix(KX[KX$Kn==i,c(1:q)]),2,mean))
+  ## temp <- cbind(mu1,(N+1):(2*N),as.numeric(factor(mu1)))
+  ## for(i in 1:N) t[i] <- temp[which(temp[,3]==i),2]
+  ## for(i in 1:S)
+  ##   for(j in 1:N)
+  ##     if(clustemp[i]==t[j]) KX$Kn[i] <- j
 
-  clustemp <- KX$Kn+N
-  t <- rep(NA,3)
-  for(i in 1:N)
-    mu1[i] <- mean(apply(as.matrix(KX[KX$Kn==i,c(1:q)]),2,mean))
-  temp <- cbind(mu1,(N+1):(2*N),as.numeric(factor(mu1)))
-  for(i in 1:N) t[i] <- temp[which(temp[,3]==i),2]
-  for(i in 1:S)
-    for(j in 1:N)
-      if(clustemp[i]==t[j]) KX$Kn[i] <- j
   ## initial value for the means and covariance
   for(i in 1:N){
     mu[[i]] <- apply(as.matrix(KX[KX$Kn==i,c(1:q)]),2,mean)
@@ -207,12 +207,15 @@ AssoTestProc <- function(signal,fam,envirX,phi,N,varSelection=c('RAW','PC.9','PC
     trphiInv<- sum(diag(phiInv))
     q  <- ncol(X)
     residual <- y - X%*%matrix(solve(XX)%*%Xy,ncol=1)
+    
     inis     <- getInitial(residual,phi,S)
+
     in_sig2g <- inis[2]
     in_sig2 <- inis[1]
     pca <- princomp(signal)
     pX1 <- signal%*%loadings(pca)[,1]
     cut <- 1
+
     if(varSelection=='PC.9'){
         prop <- 0.9
         pca <- princomp(signal) ## PCA
@@ -239,17 +242,18 @@ AssoTestProc <- function(signal,fam,envirX,phi,N,varSelection=c('RAW','PC.9','PC
     pca <- princomp(signal)
     pX <- signal%*%loadings(pca)[,1]
   }
+
     ## under all
     if(!H0){
         fit <- lm(pheno~pX1+envirX-1)
         bet <- fit$coefficient[1]
         alpha <- fit$coefficient[-1]
-        res_H1<- CNVtypeAnay(pX=pX,pheno=pheno,envirX=envirX,phi=phi,S=S,FM=len,N=N,threshold=threshold,bet=bet,alpha=alpha,sig2=in_sig2,sig2g=in_sig2g,H0=FALSE,thresEM=thresEM,thresAI=thresAI,itermax=itermax)
+        res_H1<- CNVtypeAnay(pX=pX,pheno=pheno,envirX=envirX,phi=phi,S=S,FM=len,N=N,threshold=threshold,bet=bet,alpha=alpha,sig2=in_sig2,sig2g=in_sig2g,H0=FALSE,thresEM=thresEM,thresAI=thresAI,itermax=itermax,signal=signal,varSelection=varSelection)
      } else {
          fit <- lm(pheno~envirX-1)
          bet <- 0
          alpha <- fit$coefficient
-         res_H0 <- CNVtypeAnay(pX=pX,pheno=pheno,envirX=envirX,phi=phi,S=S,FM=len,N=N,threshold=threshold,bet=bet,alpha=alpha,sig2=in_sig2,sig2g=in_sig2g,H0=TRUE,thresEM=thresEM,thresAI=thresAI,itermax=itermax)
+         res_H0 <- CNVtypeAnay(pX=pX,pheno=pheno,envirX=envirX,phi=phi,S=S,FM=len,N=N,threshold=threshold,bet=bet,alpha=alpha,sig2=in_sig2,sig2g=in_sig2g,H0=TRUE,thresEM=thresEM,thresAI=thresAI,itermax=itermax,signal=signal,varSelection=varSelection)
 }
 
     if(H0){
