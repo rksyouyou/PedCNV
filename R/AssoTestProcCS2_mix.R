@@ -56,8 +56,8 @@ CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, 
 
   ## initial value for the means and covariance
   for(i in 1:N){
-    mu[[i]] <- apply(as.matrix(KX[KX$Kn==i,c(1:q)]),2,mean)
-    del[[i]] <- cov(as.matrix(KX[KX$Kn==i,c(1:q)]))
+    mu[[i]] <- apply(as.matrix(KX[KX$Kn==(i-1),c(1:q)]),2,mean)
+    del[[i]] <- cov(as.matrix(KX[KX$Kn==(i-1),c(1:q)]))
     Ddel[i] <- det(del[[i]])
     LDdel[i] <- log(Ddel[i])
     Invdel[[i]] <- solve(del[[i]])
@@ -79,14 +79,14 @@ CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, 
         pin[i,n]  <- Ddel[n]^(-1/2)*exp(-1/2*(pX[i,]-mu[[n]])%*%Invdel[[n]]%*%as.matrix(pX[i,]-mu[[n]]))*P[n]
     ## set the method to be used
     for(i in 1:S)
-      clusRes[i] <- which(pin[i,]==max(pin[i,]))
+      clusRes[i] <- which(pin[i,]==max(pin[i,]))-1
     for(i in 1:N)
-      P[i] <- mean(clusRes==i)
+      P[i] <- mean(clusRes==(i-1))
     Sdata <- data.frame(pX=pX,clusRes=clusRes)
     ## updata the signal model
     for(i in 1:N){
-      mu[[i]] <- apply(as.matrix(Sdata[Sdata$clusRes==i,c(1:q)]),2,mean)
-      del[[i]] <- cov(as.matrix(Sdata[Sdata$clusRes==i,c(1:q)]))
+      mu[[i]] <- apply(as.matrix(Sdata[Sdata$clusRes==(i-1),c(1:q)]),2,mean)
+      del[[i]] <- cov(as.matrix(Sdata[Sdata$clusRes==(i-1),c(1:q)]))
       Ddel[i] <- det(del[[i]])
       LDdel[i] <- log(Ddel[i])
       Invdel[[i]] <- solve(del[[i]])
@@ -132,7 +132,7 @@ CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, 
     ## loglikelihood calculation
     logL_sig <- 1
     for(i in 1:S)
-        logL_sig <- logL_sig-1/2*log(Ddel[clusRes[i]])-1/2*(pX[i,]-mu[[clusRes[i]]])%*%solve(del[[clusRes[i]]])%*%as.matrix(pX[i,]-mu[[clusRes[i]]])
+        logL_sig <- logL_sig-1/2*log(Ddel[clusRes[i]+1])-1/2*(pX[i,]-mu[[clusRes[i]+1]])%*%solve(del[[clusRes[i]+1]])%*%as.matrix(pX[i,]-mu[[clusRes[i]+1]])
     logL <-logL_sig-1/2*determinant(V)$modulus-1/2*t(e)%*%solve(V)%*%e+sum(log(P[clusRes]))
     ##if(abs(logL-logLold)<threshold) ttt <- 1 else ttt <- 0
     #print(ttt)

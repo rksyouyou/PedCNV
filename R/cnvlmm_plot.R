@@ -27,10 +27,10 @@ plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
         PCA1 <- sX%*%loadings(pca)[,1]
 
         if(adjust) {
-            clusters <- matrix(x$silWidth$silRes_adjust$clus)
-            rownames(clusters) <- rownames(x$sil$silRes_adjust)} else {
-                clusters <- matrix(x$silWidth$silRes$clus)
-                rownames(clusters) <- rownames(x$sil$silRes)}
+            clusters <- matrix(x$silWidth$adjusted$silRes.adjust$clus)
+            rownames(clusters) <- rownames(x$sil$adjusted$silRes.adjust)} else {
+                clusters <- matrix(x$silWidth$unadjusted$silRes$clus)
+                rownames(clusters) <- rownames(x$sil$unadjusted$silRes)}
         temp <- merge(PCA1,clusters,by='row.names')[,-1]
         colnames(temp) <- c('PCA1','clusters')
         temp[,2] <- factor(temp[,2])
@@ -46,10 +46,10 @@ plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
       segmean <- as.matrix(apply(sX,1,mean))
 
       if(adjust) {
-          clusters <- matrix(x$silWidth$silRes_adjust$clus)
-          rownames(clusters) <- rownames(x$sil$silRes_adjust)} else {
-              clusters <- matrix(x$silWidth$silRes$clus)
-              rownames(clusters) <- rownames(x$sil$silRes)}
+          clusters <- matrix(x$silWidth$adjusted$silRes.adjust$clus)
+          rownames(clusters) <- rownames(x$sil$adjusted$silRes.adjust)} else {
+              clusters <- matrix(x$silWidth$unadjusted$silRes$clus)
+              rownames(clusters) <- rownames(x$sil$unadjusted$silRes)}
       
 
       temp <- merge(cbind(segmean,PCA1),clusters,by='row.names')[,-1]
@@ -61,17 +61,17 @@ plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
   if(type=='sil'){
 
       if(adjust){
-          silRes <- x$silWidth$silRes_adjust
-          silMean <- x$silWidth$silMean_adjust
-          clusNo <- x$silWidth$clusNum_adjust
-          clusAvg <- x$silWidth$clusAvg_adjust
-          abandon_num <- length(x$silWidth$abandon_adjust)
+          silRes <- x$silWidth$adjusted$silRes.adjust
+          silMean <- x$silWidth$adjusted$silMean.adjust
+          clusNo <- x$silWidth$adjusted$clusNum.adjust
+          clusAvg <- x$silWidth$adjusted$clusAvg.adjust
+          abandon_num <- length(x$silWidth$adjusted$abandon.adjust)
       }else{
-          silRes <- x$silWidth$silRes
-          silMean <- x$silWidth$silMean
-          clusNo <- x$silWidth$clusNum
-          clusAvg <- x$silWidth$clusAvg
-          abandon_num <- length(x$silWidth$abandon)
+          silRes <- x$silWidth$unadjusted$silRes
+          silMean <- x$silWidth$unadjusted$silMean
+          clusNo <- x$silWidth$unadjusted$clusNum
+          clusAvg <- x$silWidth$unadjusted$clusAvg
+          abandon_num <- length(x$silWidth$unadjusted$abandon)
       }
       obsNo <- dim(silRes)[1]
       clusRes <- silRes$clus

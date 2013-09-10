@@ -39,8 +39,8 @@ silWidth <- function(dat,thres_sil=0.05,thres_MAF=0.01){
 
 
     abandon.id <- row.names(sil_adjust)[which(is.na(sil_adjust))]
-    silRes.old <- data.frame(clus=clusRes,sil=sil)
-    silRes.new <- data.frame(clus=clus_adjust,sil=sil_adjust)
+    silRes.old <- data.frame(clus=clusRes-1,sil=sil)
+    silRes.new <- data.frame(clus=clus_adjust-1,sil=sil_adjust)
     silRes.adjust<- silRes.new[!is.na(silRes.new$sil),]
 
     ## change the order to the oringinal order
