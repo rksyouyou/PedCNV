@@ -1,7 +1,7 @@
 ClusProc0 <- function(signal,signal.mean,Num,threshold,thresMAF,cut,itermax,thres_sil){
 
     seed<- sample(c(1:1000000),1)
-    print(paste0("seed is ", seed))
+    ## print(paste0("seed is ", seed))
     set.seed(seed)
     
     pX <- as.matrix(signal)
@@ -56,8 +56,10 @@ ClusProc0 <- function(signal,signal.mean,Num,threshold,thresMAF,cut,itermax,thre
     }
     
     logL <- logL-1/2*S*cut*log(2*pi)
-    print(paste("The logliklihood is",logL,"when clustering number is ",Num))
 
+    
+    cat("The logliklihood for signal model is ",logL," when clustering number is ",Num,'.\n',sep='')
+    
     Sdata$clusRes <- Sdata$clusRes+Num
     old.order.mean <- as.matrix(tapply(signal.mean,Sdata$clusRes,mean))
     old.order.id <- (Num+1):(2*Num)
@@ -108,21 +110,26 @@ ClusProc <- function(signal,N=2:6,varSelection=c('RAW','PC.9','PC1','MEAN'),thre
         varprop  <- vars/sum(vars)
         cumvars <- as.vector(cumsum(varprop))
         while(cumvars[cut]<prop)  cut=cut+1
-        print(paste0("we use Comp.1 to Comp.",cut))
+        if(cut>1)  cat("The first ",cut,' principal components are used!\n',sep='') else cat("The first principal components is used!\n",sep='')
         Invcov <- matrix(0,nrow=cut,ncol=cut)
         diag(Invcov) <- 1/vars[1:cut]
         comptable <- data.frame(sdev=pca$sdev,vars=vars,cumu=cumvars)
-        print("Variable Selection")
-        print(t(comptable[1:(cut+1),]))
+        ## print("Variable Selection")
+        ## print(t(comptable[1:(cut+1),]))
         coef <- pca$loadings[,1:cut]
         pX <- sX%*%coef
     }
     if(varSelection=='RAW') {
         pX <- sX
         cut <- ncol(pX)
+        cat("The raw intensity measurement is used!\n",sep='')
     }
-    if(varSelection=='MEAN')    pX <- apply(sX,1,mean)
+    if(varSelection=='MEAN'){
+        pX <- apply(sX,1,mean)
+        cat("The mean of the intensity measurement is used!\n",sep='')
+    }
     if(varSelection=='PC1'){
+        cat("The first principal components is used!\n",sep='')
         pX <- prcomp(sX)$x[,1]
     }
 

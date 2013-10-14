@@ -55,7 +55,7 @@ plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
       temp <- merge(cbind(segmean,PCA1),clusters,by='row.names')[,-1]
       colnames(temp) <- c('Mean','PCA1','clusters')
       temp[,3] <- factor(temp[,3])
-      print(qplot(segmean,PCA1,color=clusters,data=temp))
+      print(qplot(Mean,PCA1,color=clusters,data=temp))
   }
 
   if(type=='sil'){
@@ -64,18 +64,18 @@ plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
           silRes <- x$silWidth$adjusted$silRes.adjust
           silMean <- x$silWidth$adjusted$silMean.adjust
           clusNo <- x$silWidth$adjusted$clusNum.adjust
-          clusAvg <- x$silWidth$adjusted$clusAvg.adjust
-          abandon_num <- length(x$silWidth$adjusted$abandon.adjust)
+          clusAvg <- x$silWidth$adjusted$clusAvg.adjust 
+          abandon_num <- length(x$silWidth$adjusted$abandon.id)
       }else{
           silRes <- x$silWidth$unadjusted$silRes
           silMean <- x$silWidth$unadjusted$silMean
           clusNo <- x$silWidth$unadjusted$clusNum
           clusAvg <- x$silWidth$unadjusted$clusAvg
-          abandon_num <- length(x$silWidth$unadjusted$abandon)
+          abandon_num <- 0
       }
+      silRes <- silRes[with(silRes,order(silRes$clus,-silRes$sil)),]
       obsNo <- dim(silRes)[1]
       clusRes <- silRes$clus
-
       s <- rev(silRes[,"sil"])
       space <- c(0,rev(diff(cli <- silRes$clusRes)))
       space[space!=0] <- 5
@@ -89,8 +89,8 @@ plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
       mtext(expression(paste(j, " :  ", n[j], " | ", ave[i %in% Cj] ~ ~s[i])), adj = 1.04, line = -1.2)
       y <- rbind(rev(y),(clusRes))
       for (j in 1:clusNo) {
-          yj <- mean(y[1,y[2,]==j])
-          text(1,yj , paste(j, ":  ",table(clusRes)[j], " | ", format(clusAvg[j], digits = 1, nsmall = 2)), xpd = NA, adj = 0.8)
+          yj <- mean(y[1,y[2,]==j-1])
+          text(1,yj , paste(j-1, ":  ",table(clusRes)[j], " | ", format(clusAvg[j], digits = 1, nsmall = 2)), xpd = NA, adj = 0.8)
       }
   }
 }

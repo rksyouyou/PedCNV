@@ -45,7 +45,7 @@ doPolyGenic<-function(envirX,snp,pheno,phi,H0, thresEM,itrmax=20,thresAI,phiInv)
       curTheta <- inis[2]
       curK     <- inis[1]/inis[2]
 
-      print('AI algorithm for REML')
+      cat('AI algorithm for REML.\n')
       results <- doAI_REML(curTheta,curK,y,X,yy,Xy,XX,phi,phiInv, trphiInv,S, q,itrmax,thresAI)
 
       return(results)
