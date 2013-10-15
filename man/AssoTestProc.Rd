@@ -3,7 +3,7 @@
 \title{CNV association test procedure}
 \usage{
   AssoTestProc(signal, fam, envirX, phi, N,
-    varSelection = c("RAW", "PC.9", "PC1", "MEAN"),
+    varSelection = c("PC1", "RAW", "PC.9", "MEAN"),
     H0 = TRUE, threshold = 1e-05, itermax = 8,
     thresEM = 0.005, thresAI = 1e-05)
 }
@@ -23,7 +23,7 @@
   can be built with the kinship coefficient or the
   estimated correlation matrix with SNP data. Free software
   that builds this matrix is available, and one of them can
-  be downloaded at \url{http://biostat.ac.kr/wisard} The
+  be downloaded at \url{http://biostat.ac.kr/fqls/} The
   default is an identity matrix and it is for independent
   samples.}
 
@@ -39,7 +39,8 @@
   the first several PCA scores which account for 90\% of
   all the variance will be used. If the value is 'PC1',
   then the first PCA scores will be used. If the value is
-  'MEAN', the mean of all the probes will be used.}
+  'MEAN', the mean of all the probes will be used. The
+  default method is 'PC1'.}
 
   \item{H0}{Logicals. If it is TRUE (the default), all
   parameters are estimated under the assumption that there
@@ -80,9 +81,6 @@
   for different strategies with the intensity measurement.
 }
 \examples{
-# Load data and correlation matrix
-data(simudat)
-data(phi)
 # Fit the data under the assumption that there are 3 clusters
 fit.pc <- AssoTestProc(signal=signal,fam=fam,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
 }

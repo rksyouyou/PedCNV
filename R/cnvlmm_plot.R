@@ -12,8 +12,6 @@
 ##' @author Meiling Liu
 ##' @method plot clust
 ##' @examples
-##' # Load data and correlation matrix
-##' data(simudat)
 ##' # Fit the data under the given clustering numbers
 ##' clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
 ##' plot(clus.fit,type='histo')

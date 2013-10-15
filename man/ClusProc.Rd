@@ -3,9 +3,9 @@
 \title{CNV clustering Procedure}
 \usage{
   ClusProc(signal, N = 2:6,
-    varSelection = c("RAW", "PC.9", "PC1", "MEAN"),
+    varSelection = c("PC1", "RAW", "PC.9", "MEAN"),
     threshold = 1e-05, itermax = 8, adjust = TRUE,
-    thresMAF = 0.01, scale = FALSE)
+    thresMAF = 0.01, scale = FALSE, thresSil = 0.01)
 }
 \arguments{
   \item{signal}{The matrix of intensity measurements. The
@@ -24,7 +24,8 @@
   the first several PCA scores which account for 90\% of
   all the variance will be used. If the value is 'PC1',
   then the first PCA scores will be used. If the value is
-  'MEAN', the mean of all the probes will be used.}
+  'MEAN', the mean of all the probes will be used. The
+  default method is 'PC1'.}
 
   \item{threshold}{Optional number of convergence
   threshold. The iteration stops if the absolute difference
@@ -39,9 +40,11 @@
   \item{adjust}{Logicals, If TRUE (default), the result
   will be adjusted by the silhouette score. See details.}
 
-  \item{thresMAF}{The minor allele frequency threshold.
-  P-values are not calculated for CNVs of which minor
-  allele frequencies are less than thresMAF.}
+  \item{thresMAF}{The minor allele frequency threshold.}
+
+  \item{thresSil}{The abandon threshold. The individual
+  whose silhouette score is smaller than this value will be
+  abandoned.}
 
   \item{scale}{Logicals. If TRUE, the signal will be scale
   by using sample mean and sample variance by columns
@@ -67,8 +70,6 @@
   scores. } }
 }
 \examples{
-# Load data and correlation matrix
-data(simudat)
 # Fit the data under the given clustering numbers
 clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
 }

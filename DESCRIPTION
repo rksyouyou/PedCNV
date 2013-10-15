@@ -13,6 +13,7 @@ Description: An implementation for association analysis with CNV data in R. It
     probable copy number with phenotype is tested. This method can be applied
     to both the independent and correlated population.
 License: MIT
+LazyData: true
 Depends:
     Rcpp (>= 0.10.4),
     RcppArmadillo (>= 0.3.900.0),
@@ -20,9 +21,9 @@ Depends:
 LinkingTo: Rcpp, RcppArmadillo, ggplot2
 Collate:
     'AI_EM_mixed.R'
-    'AssoTestProcCS2_mix.R'
     'ClusProc.R'
     'cnvlmm_plot.R'
     'silWidth.R'
     'docs.R'
     'score_test.R'
+    'AssoTestProcCS_mix.R'

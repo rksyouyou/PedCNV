@@ -6,9 +6,9 @@
   Empirical/kinship correlation matrix between individuals.
   This correlation matrix can be calculated based on the
   familial relationship between individuals or large-scale
-  SNP data by omic data analysis toolkit WISARD. The free
-  software WISARD can be downloaded from
-  \url{http://biostat.cau.ac.kr/wisard/}. If correlation
+  SNP data by omic data analysis toolkit FQLS. The free
+  software FQLS can be downloaded from
+  \url{http://biostat.cau.ac.kr/fqls/}. If correlation
   matrix is estimated with the large-scale SNP data, the
   proposed method becomes robust under the presence of
   population substructure.
@@ -20,7 +20,7 @@ data(phi)
   Meiling Liu
 }
 \references{
-  WISARD \url{http://biostat.cau.ac.kr/wisard/}
+  FQLS \url{http://biostat.cau.ac.kr/fqls/}
 }
 \keyword{datasets}
 

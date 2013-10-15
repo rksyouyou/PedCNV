@@ -15,8 +15,6 @@
   \code{\link{ClusProc}}.
 }
 \examples{
-# Load data and correlation matrix
-data(simudat)
 # Fit the data under the given clustering numbers
 clus.fit <- ClusProc(signal=signal,N=2:6,varSelection='PC.9')
 print(clus.fit)
