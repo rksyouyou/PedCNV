@@ -15,9 +15,6 @@
 ##' \item{STEp}{The pvalue of score test with the most probable CNV.}
 ##' @author Meiling Liu, Sungho Won 
 ##' @examples
-##' # Load data and correlation matrix
-##' data(simudat)
-##' data(phi)
 ##' # Fit the data under the assumption that there are 3 clusters
 ##' asso.fit <- AssoTestProc(signal=signal,fam=fam,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
 ##' cnv_e <- asso.fit$clusRes
@@ -62,9 +59,6 @@ STE<- function(envirX,clusRes,fam,alpha,phi,sig2g,sig2){
 ##' \item{df}{The degree of freedom of score test with the intenstiy value under null hypothesis.}
 ##' @author Meiling Liu, Sungho Won 
 ##' @examples
-##' # Load data and correlation matrix
-##' data(simudat)
-##' data(phi)
 ##' # Fit the data under the assumption that there are 3 clusters
 ##' asso.fit <- AssoTestProc(signal=signal,fam=fam,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
 ##' alpha <- asso.fit$para$alpha

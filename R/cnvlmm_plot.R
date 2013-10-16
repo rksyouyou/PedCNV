@@ -18,21 +18,22 @@
 ##' @export
 plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
 
+    MEAN=NULL
+    PC1=NULL
+    type <- match.arg(type)
     if(type=='histo'){
-        
         sX <- as.matrix(x$signal)
         pca <- princomp(sX)
         PCA1 <- sX%*%loadings(pca)[,1]
-
         if(adjust) {
             clusters <- matrix(x$silWidth$adjusted$silRes.adjust$clus)
             rownames(clusters) <- rownames(x$sil$adjusted$silRes.adjust)} else {
                 clusters <- matrix(x$silWidth$unadjusted$silRes$clus)
                 rownames(clusters) <- rownames(x$sil$unadjusted$silRes)}
-        temp <- merge(PCA1,clusters,by='row.names')[,-1]
-        colnames(temp) <- c('PCA1','clusters')
+        temp <- as.data.frame(merge(PCA1,clusters,by='row.names')[,-1])
+        colnames(temp) <- c('PC1','clusters')
         temp[,2] <- factor(temp[,2])
-        print(qplot(PCA1,fill=clusters,data=temp,geom="density")+geom_histogram(aes(y=..count..),binwidth=0.2))
+        print(qplot(PC1,fill=clusters,data=temp,geom="density")+geom_histogram(aes_string(y='..count..'),binwidth=0.2))
   }
     
   if(type=='scat'){
@@ -50,10 +51,10 @@ plot.clust <- function(x,type=c('histo','scat','sil'), adjust=TRUE, ...){
               rownames(clusters) <- rownames(x$sil$unadjusted$silRes)}
       
 
-      temp <- merge(cbind(segmean,PCA1),clusters,by='row.names')[,-1]
-      colnames(temp) <- c('Mean','PCA1','clusters')
+      temp <- as.data.frame(merge(cbind(segmean,PCA1),clusters,by='row.names')[,-1])
+      colnames(temp) <- c('MEAN','PC1','clusters')
       temp[,3] <- factor(temp[,3])
-      print(qplot(Mean,PCA1,color=clusters,data=temp))
+      print(qplot(MEAN,PC1,color=clusters,data=temp))
   }
 
   if(type=='sil'){

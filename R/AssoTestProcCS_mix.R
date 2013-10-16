@@ -1,6 +1,6 @@
 
 Inde <- function(H0=H0,pheno=pheno,envirX=envirX,clusRes=clusRes,S=S){
-    cat('The individuals are independent, LM is used!\n',sep='')
+    cat('The individuals are independent, LM is used.\n',sep='')
     ## changed
     if(!H0){
         res <- lm(pheno~envirX+clusRes-1)
@@ -100,7 +100,7 @@ CNVtypeAnay <- function(pheno,pX,envirX,phi,S,FM,N,threshold, bet, alpha, sig2, 
             alpha <- temp$alpha
             e <- temp$e
         }else {
-            cat('The individuals are correlated, LMM is used!\n',sep='')
+            cat('The individuals are correlated, LMM is used.\n',sep='')
             sig2 <- res$sig2
             sig2g <- res$sig2g
             len <- length(res$para)
@@ -167,11 +167,11 @@ AssoTestProc <- function(signal,fam,envirX,phi,N,varSelection=c('PC1','RAW','PC.
     rn_envirX <- row.names(envirX)
     iid <- fam[,2]
     if(sum(!(rn_signal%in%iid))>0) {
-        cat('The row name of signal data is not coincident with individual ID!\n')
+        cat('The row name of signal data is not coincident with individual ID.\n')
         return(0)
     }
     if(sum(!(rn_envirX%in%iid))>0) {
-        cat('The row name of covariant data is not coincident with individual ID!\n')
+        cat('The row name of covariant data is not coincident with individual ID.\n')
         return(0)
     }
 

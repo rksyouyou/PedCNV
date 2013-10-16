@@ -12,7 +12,8 @@ Description: An implementation for association analysis with CNV data in R. It
     estimated with the proposed likelihood and the association of the most
     probable copy number with phenotype is tested. This method can be applied
     to both the independent and correlated population.
-License: MIT
+License: MIT + file LICENSE
+URL: https://github.com/rksyouyou/PedCNV
 LazyData: true
 Depends:
     Rcpp (>= 0.10.4),

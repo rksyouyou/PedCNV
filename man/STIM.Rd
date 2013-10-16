@@ -45,9 +45,6 @@
   value.
 }
 \examples{
-# Load data and correlation matrix
-data(simudat)
-data(phi)
 # Fit the data under the assumption that there are 3 clusters
 asso.fit <- AssoTestProc(signal=signal,fam=fam,envirX=envirX,phi=phi,N=3,varSelection='PC.9')
 alpha <- asso.fit$para$alpha

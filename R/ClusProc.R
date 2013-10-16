@@ -109,7 +109,7 @@ ClusProc <- function(signal,N=2:6,varSelection=c('PC1','RAW','PC.9','MEAN'),thre
         varprop  <- vars/sum(vars)
         cumvars <- as.vector(cumsum(varprop))
         while(cumvars[cut]<prop)  cut=cut+1
-        if(cut>1)  cat("The first ",cut,' principal components are used!\n',sep='') else cat("The first principal component is used!\n",sep='')
+        if(cut>1)  cat("The first ",cut,' principal components are used.\n',sep='') else cat("The first principal component is used.\n",sep='')
         Invcov <- matrix(0,nrow=cut,ncol=cut)
         diag(Invcov) <- 1/vars[1:cut]
         comptable <- data.frame(sdev=pca$sdev,vars=vars,cumu=cumvars)
@@ -121,21 +121,21 @@ ClusProc <- function(signal,N=2:6,varSelection=c('PC1','RAW','PC.9','MEAN'),thre
     if(varSelection=='RAW') {
         pX <- sX
         cut <- ncol(pX)
-        cat("The raw intensity measurement is used!\n",sep='')
+        cat("The raw intensity measurement is used.\n",sep='')
     }
     if(varSelection=='MEAN'){
         pX <- apply(sX,1,mean)
-        cat("The mean of the intensity measurement is used!\n",sep='')
+        cat("The mean of the intensity measurement is used.\n",sep='')
     }
     if(varSelection=='PC1'){
-        cat("The first principal component is used!\n",sep='')
+        cat("The first principal component is used.\n",sep='')
         pX <- prcomp(sX)$x[,1]
     }
 
     signal.mean <- as.matrix(apply(sX0,1,mean))
     rownames(signal.mean) <- rownames(sX0)
 
-    if(1%in%N) stop('The assigned clustering number must be larger than 1!')
+    if(1%in%N) stop('The assigned clustering number must be larger than 1.')
     res <- list()
     for(i in 1:length(N)){
         Num <- N[i]
